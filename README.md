@@ -1,8 +1,10 @@
-# behaviour-analysis README
+# vscode-behaviour-analysis README
 
 This is the README for your extension "behaviour-analysis". After writing up a brief description, we recommend including the following sections.
 
 ## Features
+
+This extension adapt the package behaviour-analysis to vscode.
 
 Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
 
