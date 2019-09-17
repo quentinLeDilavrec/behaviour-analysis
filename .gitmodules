@@ -1,0 +1,6 @@
+[submodule "Viewers/global-behavior-visualization"]
+	path = Viewers/global-behavior-visualization
+	url = git@github.com:quentinLeDilavrec/global-behavior-visualization.git
+[submodule "Viewers/context-behavior-visualization"]
+	path = Viewers/context-behavior-visualization
+	url = git@github.com:quentinLeDilavrec/context-behavior-visualization.git
