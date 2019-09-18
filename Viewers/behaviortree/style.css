@@ -1,0 +1,25 @@
+.node {
+  cursor: pointer;
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  fill: #fff;
+  font: 10px sans-serif;
+}
+
+.link {
+  fill: none;
+  /*stroke: steelblue;*/
+  opacity: 0.3;
+  /*stroke-width: 1.5px;*/
+}
+
+#levels {
+  margin-left: 120px;
+}

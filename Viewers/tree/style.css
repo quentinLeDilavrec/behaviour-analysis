@@ -1,0 +1,214 @@
+.node circle {
+  fill: var(--vscode-editor-foreground);
+  /* stroke: steelblue; */
+  stroke-width: 1px;
+}
+
+/* .node*/
+#chart text {
+  fill: black; /*var(--vscode-editor-foreground);*/
+  font: 20px sans-serif;
+  /* mix-blend-mode: difference; */
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 2px;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  font-weight: 800;
+}
+
+.link {
+  fill: none;
+  stroke: var(--vscode-editor-foreground);
+  stroke-width: 1px;
+}
+
+/* pretty radio buttons */
+input[type="radio"] {
+  position: absolute;
+  visibility: hidden;
+  display: none;
+}
+
+label {
+  color: #aaa;
+  display: inline-block;
+  border: solid 1, 5px #aaa;
+  background-color: #2f2c33;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 2px 5px;
+}
+
+input[type="radio"]:checked + label {
+  color: #333;
+  background: #aaa;
+}
+
+label + input[type="radio"] + label {
+  border-left: solid 3px #aaa;
+}
+.radio-group {
+  border: solid 2px #aaa;
+  display: inline-block;
+  margin: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* settings */
+
+.settings {
+  position: fixed;
+  z-index: 90;
+  /* left: 5%;
+  top: 0%;
+  transform: translate(0%, 0%); */
+}
+
+.settings > * {
+  display: block;
+  margin: 10px;
+}
+
+#advanced-settings {
+  overflow: auto;
+  max-height: 90vh;
+  /* left: 5%;
+  top: 0%;
+  transform: translate(0%, 0%); */
+}
+
+#advanced-settings > * {
+  display: block;
+  margin: 10px auto;
+  width: fit-content;
+  width: -moz-fit-content;
+}
+
+#legend1 > div > div {
+  display: block;
+  margin: 10px auto;
+  width: fit-content;
+  width: -moz-fit-content;
+}
+
+
+.aaa {
+  color: hsl(0, 90%, 40%);
+  color: hsl(90, 80%, 30%);
+}
+
+/* printing */
+@media print {
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+}
+body {
+  margin: 0;
+  padding: 0;
+}
+div#chart {
+  display: block;
+  margin: 0;
+  padding: 0;
+  /* max-width: 1000px; */
+  overflow: hidden;
+}
+
+div#chart > div {
+  float: left;
+  width: 100%;
+}
+
+div#chart p,
+div#chart div:not(.node),
+div#chart span {
+  display: inline-grid;
+}
+
+.node {
+  position: relative;
+}
+
+div#chart div.node {
+  display: block;
+  float: right;
+  overflow: hidden;
+  /* padding: 10px; */
+  /* width:100%; */
+  transition: height 1s linear, width 1s linear;
+}
+div#chart div.node:hover {
+  margin: -1px;
+  border: 1px solid black;
+}
+div#chart span {
+  float: right;
+}
+div#chart .node > div:nth-child(1) {
+  width: 95.9px;
+  margin: 2px;
+  /* height: 20px; */
+  white-space: nowrap;
+  float: left;
+  overflow: visible;
+  transition: height 1s linear, width 1s linear;
+}
+
+div#chart .node > div:nth-child(1) > * {
+  display: inline;
+  margin-block-start: 0;
+  white-space: nowrap;
+  /* overflow: hidden; */
+  margin-block-end: 0.2em;
+  margin-inline-end: 10px;
+
+}
+div#chart .node > div:nth-child(1) > *:first-child {
+  font: small Georgia, sans-serif;
+  font-weight: bold;
+  color: black
+}
+div#chart .node > div:nth-child(1) > *:not(:first-child) {
+  font: small Georgia, sans-serif;
+  color: hsla(0, 0%, 0%, 0.7);
+}
+/* div#chart .node > div:nth-child(1) > *:not(:first-child) > :first-child {
+  font: italic bold 12px/30px Georgia, sans-serif;
+  color: hsla(0, 0%, 0%, 0.7);
+} */
+/*html node*/
+.node > .tooltip {
+  position: fixed;
+  visibility: hidden;
+  pointer-events: none;
+  /* width: 120px; */
+  /* width: 96px; */
+  background-color: black;
+  color: #fff;
+  /* text-align: center; */
+  border-radius: 6px;
+  /* padding: 5px 0; */
+  z-index: 111;
+  /* word-wrap: break-word; */
+  overflow: hidden;
+  /* top: 0; */
+  /* left: 0%; */
+}
+
+/* .node > .tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent black;
+} */
+/* .tooltip:hover > .tooltip {
+  visibility: visible;
+} */
