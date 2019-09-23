@@ -6,7 +6,3 @@ export type NgramStats = {
   pocc: number,
   tocc: number
 };
-
-export interface GeneralLocation extends Location {
-  origin:WorkspaceFolder;
-}
