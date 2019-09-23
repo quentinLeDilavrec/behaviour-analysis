@@ -1,21 +1,22 @@
 # vscode-behavior-analysis README
 
-This extension help you better test your project and better understand how it behave during usage. 
+This extension help you better test your project and better understand how it behave during its usage. 
 
 ## Features
 
 ### Help you instrument your project to analyse it afterward.
 <!-- ### Install a postgres database (in a docker container) to index the traces. -->
+need gif
 ### Launch a browser that gather the traces
-
+need gif
 ### Help you extend your test framework to gather traces during tests
-
+need gif
 ### Put code lenses and provide code actions on block of codes to show dynamic usage
-
+need gif
 ### Give a global view on the usage of your project
-
+need gif
 ### Show the context of execution of parts of your code
-
+need gif
 <!-- ### old
 Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
 
