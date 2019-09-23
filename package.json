@@ -1,8 +1,8 @@
 {
-	"name": "vscode-behaviour-analysis",
-	"displayName": "behaviour-analysis",
-	"description": "Analyze javascript behaviour to provide dynamic informations about code usage gathered during test and production.",
-	"version": "0.0.1",
+	"name": "vscode-behavior-analysis",
+	"displayName": "behavior-analysis",
+	"description": "Analyze javascript behavior to provide feedbacks about code usage, it uses traces gathered during test and production runs.",
+	"version": "1.0.0",
 	"engines": {
 		"vscode": "^1.34.0"
 	},
@@ -10,18 +10,117 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.helloWorld",
 		"onLanguage:javascript",
-		"onLanguage:typescript"
+		"onLanguage:typescript",
+		"onCommand:BehaviorProvider.showContextViewer",
+		"onCommand:BehaviorProvider.showHierarchicalViewer",
+		"onCommand:BehaviorAnalysis.launchInstrumentedBrowser"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
+				"command": "BehaviorProvider.showContextViewer",
+				"title": "show n-gram view",
+				"category": "View"
+			},
+			{
+				"command": "BehaviorProvider.showHierarchicalViewer",
+				"title": "show tree view",
+				"category": "View"
+			},
+			{
+				"command": "BehaviorProvider.uploadTrace",
+				"title": "upload current trace to the database"
+			},
+			{
+				"command": "BehaviorProvider.launchInstrumentedBrowser",
+				"title": "launch instrumented browser"
+			},
+			{
+				"command": "BehaviorProvider.createDataBase",
+				"title": "create database"
+			},
+			{
+				"command": "BehaviorAnalysis.launchInstrumentedBrowser",
+				"title": "launch an instrumented browser"
 			}
-		]
+		],
+		"configuration": {
+			"title": "BehaviorAnalysis",
+			"properties": {
+				"behaviorAnalysis.extendedBabelPlugin": {
+					"type": "string",
+					"description": "Path to the extended babel plugin in charge of manipulating actual code"
+				},
+				"behaviorAnalysis.interception.interceptDeclaredFunctions": {
+					"type": "boolean",
+					"default": true,
+					"description": "Intercept functions declared in the current package"
+				},
+				"behaviorAnalysis.interception.interceptDependenciesFunctions": {
+					"type": "boolean",
+					"default": false,
+					"description": "Intercept function declared by dependencies"
+				},
+				"behaviorAnalysis.interception.automateInstrumentation": {
+					"type": [
+						"string",
+						"boolean"
+					],
+					"default": false,
+					"enum": [
+						"gutenberg",
+						true,
+						false
+					],
+					"description": "Automatically setup instrumentation"
+				},
+				"behaviorAnalysis.database.identification": {
+					"type": [
+						"object"
+					],
+					"default": {
+						"user": "ubehavior",
+						"host": "localhost",
+						"database": "behaviordb",
+						"password": "password",
+						"port": 5432
+					},
+					"scope": "window",
+					"description": "The data necessary to connect to the database containing the traces"
+				},
+				"behaviorAnalysis.database.stackFile": {
+					"type": [
+						"string"
+					],
+					"default": "behaviorDataBaseStack.yml",
+					"description": "the file containing the stack for docker compose"
+				},
+				"behaviorAnalysis.database.mappingFile": {
+					"type": [
+						"string"
+					],
+					"default": "modifications.csv",
+					"description": "Mapping old and new position of instrumented ranges"
+				},
+				"behaviorAnalysis.experimentation.startPage": {
+					"type": [
+						"string"
+					],
+					"format": "uri",
+					"default": "about:blank",
+					"description": "The start page of the instrumented browser"
+				},
+				"behaviorAnalysis.experimentation.tracesOutputDirectory": {
+					"type": [
+						"string"
+					],
+					"default": "/tmp/behavior_traces",
+					"description": "The output directory where traces will be stored"
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
@@ -32,18 +131,30 @@
 	},
 	"devDependencies": {
 		"@types/babel__traverse": "^7.0.6",
+		"@types/d3": "^5.7.2",
+		"@types/event-stream": "^3.3.34",
 		"@types/mocha": "^2.2.42",
 		"@types/mysql": "^2.15.6",
-		"@types/node": "^10.12.21",
-		"event-stream": "^4.0.1",
+		"@types/node": "^10.14.10",
+		"@types/pg": "^7.4.14",
+		"@types/pg-copy-streams": "^1.2.0",
 		"tslint": "^5.12.1",
 		"typescript": "^3.3.1",
 		"vscode": "^1.1.28"
 	},
 	"dependencies": {
 		"@babel/parser": "^7.4.5",
+		"@babel/plugin-syntax-jsx": "^7.2.0",
+		"@babel/plugin-syntax-typescript": "^7.3.3",
 		"@babel/traverse": "^7.4.5",
 		"@babel/types": "^7.4.4",
-		"mysql": "^2.17.1"
+		"behavior-code-processing": "git+https://git@github.com/quentinLeDilavrec/behavior-code-processing.git",
+		"behavior-trace-processing": "git+https://git@github.com/quentinLeDilavrec/behavior-trace-processing.git",
+		"chrome-instrumentation": "git+https://git@github.com/quentinLeDilavrec/Chrome-instrumentation.git",
+		"d3": "^5.9.7",
+		"event-stream": "^4.0.1",
+		"mysql": "^2.17.1",
+		"pg": "^7.11.0",
+		"pg-copy-streams": "^2.2.0"
 	}
 }
