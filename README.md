@@ -42,7 +42,7 @@ code vscode-behavior-analysis
 Then launch the extension in a new instance of vscode with `F5` then open your project in this new instance.
 
 ## First time usage
-You can use ()[https://] as an example for the result of the following instructions
+You can use [this fork of gutenberg](https://github.com/quentinLeDilavrec/gutenberg) as an example for the result of the following instructions
 ### Producing traces
 #### Preparations
 If you aim at producing traces,
