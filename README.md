@@ -39,7 +39,7 @@ For now it is not packaged, so it's better to use vscode itself to launch the ex
 git clone git@github.com:quentinLeDilavrec/vscode-behavior-analysis
 code vscode-behavior-analysis
 ```
-Then launch the extension in a new instance of vscode with `F5` then open your project in this new instance.
+Then compile with `npm run compile` and launch the extension in a new instance of vscode with `F5` then open your project in this new instance.
 
 ## First time usage
 You can use [this fork of gutenberg](https://github.com/quentinLeDilavrec/gutenberg) as an example for the result of the following instructions
