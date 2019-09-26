@@ -35,14 +35,14 @@ And for now your project need to use _Babeljs_ for the instrumentation, and _Jes
 ## Installation
 
 For now it is not packaged, so it's better to use vscode itself to launch the extension.
-```bash
-git clone git@github.com:quentinLeDilavrec/vscode-behavior-analysis
-code vscode-behavior-analysis
-```
-Then compile with `npm run compile` and launch the extension in a new instance of vscode with `F5` then open your project in this new instance.
+So first clone this repository with `git clone https://github.com/quentinLeDilavrec/behavior-analysis.git`,
+then open it with vscode using `code vscode-behavior-analysis`,
+compile it with `npm run compile`
+and launch it in a new instance of vscode with `F5`.
+You can now open your own projects in this new augmented instance of vscode.
 
 ## First time usage
-You can use [this fork of gutenberg](https://github.com/quentinLeDilavrec/gutenberg) as an example for the result of the following instructions
+You can use [this fork of gutenberg](https://github.com/quentinLeDilavrec/gutenberg) as an example for some of the results of the following instructions
 ### Producing traces
 #### Preparations
 If you aim at producing traces,
@@ -51,11 +51,11 @@ the instrumentation need to be integrated to the compilation pipeline of your pr
 - Copy the basic extended babel plugin and preset in your project with the vscode command `install basic preset`
 - In your _Babeljs_ config set `passPerPreset` to `true`, prepends the path of the preset file to `presets` and `startLine` to `1`.
 - Compile your project
-### Production of traces in the browser
+#### Production of traces in the browser
 - In `.vscode/settings.json`, set `behaviorAnalysis.experimentation.startPage` to the url or your application
 - Compile your project and launch the server side
 - Execute the vscode command `launch instrumented browser`
-### Production of traces from unit tests
+#### Production of traces from unit tests
 <!-- - Copy the the jest environment in your project with the vscode command `install jest environment` -->
 - In your jest config, set `testEnvironment` to `<rootDir>/node_modules/behavior-code-processing/out/environment.js` and add a new entry to `testEnvironmentOptions` named `output_dir` and containing output path where traces will be saved
 - Then you can launch your unit test
