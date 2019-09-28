@@ -39,11 +39,13 @@
 			},
 			{
 				"command": "BehaviorProvider.createDataBase",
-				"title": "create database"
+				"title": "create database",
+				"category": "Setup"
 			},
 			{
-				"command": "BehaviorAnalysis.launchInstrumentedBrowser",
-				"title": "launch an instrumented browser"
+				"command": "BehaviorProvider.installBasicPreset",
+				"title": "Copy the basic extended babel plugin and preset",
+				"category": "Setup"
 			}
 		],
 		"configuration": {

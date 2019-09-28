@@ -11,7 +11,7 @@ import { BehaviorStatsProvider, DataBasesOptions } from './ngramsFetcher/behavio
 import { TreeView as HierarchicalView, resources_t } from './view/hierarchicalView';
 import { IndexerCollection } from "behavior-code-processing";
 import { generate_stack, startDataBase, installTables, installFunctions } from "behavior-trace-processing";
-import { writeFileSync } from 'fs';
+import { writeFileSync, readFileSync } from 'fs';
 import { resolve, join } from 'path';
 import { launchBrowser } from "chrome-instrumentation";
 
@@ -32,10 +32,15 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand("BehaviorAnalysis.createDataBase",
 		function (aaa?: null) {
 			const id = config.get("database.identification");
-			const stack_file: string | undefined = config.get("database.stackFile");
+			let stack_file: string | undefined = config.get("database.stackFile");
 			if (!id || !stack_file) {
 				throw new Error("no db config");
 			}
+			const f = vscode.workspace.workspaceFolders;
+			if (!f) {
+				throw new Error("no workspaces");
+			}
+			stack_file = join(f[0].uri.path, stack_file);
 			const stack = generate_stack(id as any);
 			console.log("stack_file future content", stack);
 			writeFileSync(stack_file, stack);
@@ -51,15 +56,43 @@ export function activate(context: vscode.ExtensionContext) {
 			if (!big_output) {
 				throw new Error("no output for traces");
 			}
-			const sp:string|undefined = config.get("experimentation.startPage");
+			const sp: string | undefined = config.get("experimentation.startPage");
 			if (!sp) {
 				throw new Error("no startPage for traces");
 			}
-			if((vscode.Uri.parse(sp)).scheme!=='http'&&(vscode.Uri.parse(sp)).scheme!=='https'){
+			if ((vscode.Uri.parse(sp)).scheme !== 'http' && (vscode.Uri.parse(sp)).scheme !== 'https') {
 				throw new Error("need to use the http or https protocol");
 			}
 			launchBrowser(sp, join(big_output, "browser"));
 		});
+
+	vscode.commands.registerCommand("BehaviorAnalysis.installBasicPreset",
+		function () {
+			const plugin_path: string | undefined = config.get("extendedBabelPlugin");
+			if (!plugin_path) {
+				throw new Error("no extendedBabelPlugin");
+			}
+			const f = vscode.workspace.workspaceFolders;
+			if (!f) {
+				throw new Error("no workspaces");
+			}
+			const t = readFileSync(join(__dirname, './../node_modules/behavior-code-processing/out/tests/example_behavior_plugin_made_by_user.js'));
+
+			f.forEach(x => {
+				const p = `module.exports = function() {
+	return {
+		plugins: [
+			'${join(x.uri.path, plugin_path)}',
+		],
+	};
+};
+`;
+				writeFileSync(join(x.uri.path, plugin_path),t);
+				writeFileSync(join(x.uri.path, 'generated_preset.js'),p);
+			});
+		});
+
+
 
 	// TODO return position changes
 	// TODO add  a command to get the default plugin as a file to be modified
@@ -76,7 +109,7 @@ export function activate(context: vscode.ExtensionContext) {
 				throw new Error("no plugin given");
 			}
 			console.log(resolve(plugin));
-			return [x.uri.toString(false), new IndexerCollection(require(join(x.uri.path,plugin)).default)];
+			return [x.uri.toString(false), new IndexerCollection(require(join(x.uri.path, plugin)).default)];
 		}));
 	vscode.workspace.onDidChangeWorkspaceFolders(
 		x => {
@@ -84,7 +117,7 @@ export function activate(context: vscode.ExtensionContext) {
 			if (!plugin) {
 				throw new Error("no plugin given");
 			}
-			x.added.forEach(x => indexers.set(x.uri.toString(false), new IndexerCollection(require(join(x.uri.path,plugin)).default)));
+			x.added.forEach(x => indexers.set(x.uri.toString(false), new IndexerCollection(require(join(x.uri.path, plugin)).default)));
 			x.removed.forEach(x => indexers.delete(x.uri.toString(false)));
 		});
 	// const CodeActionProvider = new BehaviorCodeActionProvider(context, behaviorStatsProvider);
@@ -92,7 +125,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// 	['javascript','javascriptreact','typescript','typescriptreact'], 
 	// 	CodeActionProvider,indexers);
 
-	const identification: DataBasesOptions["options"]|undefined = config.get('database.identification');
+	const identification: DataBasesOptions["options"] | undefined = config.get('database.identification');
 	if (!identification) {
 		throw new Error("Can't get extendedBabelPlugin config");
 	}

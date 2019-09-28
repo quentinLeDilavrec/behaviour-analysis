@@ -58,17 +58,17 @@ the instrumentation need to be integrated to the compilation pipeline of your pr
 #### Production of traces from unit tests
 <!-- - Copy the the jest environment in your project with the vscode command `install jest environment` -->
 - In your jest config, set `testEnvironment` to `<rootDir>/node_modules/behavior-code-processing/out/environment.js` and add a new entry to `testEnvironmentOptions` named `output_dir` and containing output path where traces will be saved
-- Then you can launch your unit test
+- Then you can launch your unit tests
 <!-- If you have any requirements or dependencies, add a section describing those and how to install and configure them. -->
 ### Setup the backend in charge of indexing traces
-- Execute the vscode command `install data base`
+- Execute the vscode command `create data base`
 - Reload the window so that the extension can log itself to the database
 
 ## Extension Settings
 This extension contributes the following settings:
 
 * `behaviorAnalysis.extendedBabelPlugin`: Path to the extended babel plugin in charge of manipulating actual code
-* `behaviorAnalysis.interception.interceptDependenciesFunctions`: Intercept functions declared in the current package
+* `behaviorAnalysis.interception.interceptDeclaredFunctions`: Intercept functions declared in the current package
 * `behaviorAnalysis.interception.automateInstrumentation`: Automatically setup instrumentation
 * `behaviorAnalysis.database.identification`: The data necessary to connect to the database containing the traces
 * `behaviorAnalysis.database.stackFile`: the file containing the stack for docker compose
