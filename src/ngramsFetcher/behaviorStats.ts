@@ -116,7 +116,7 @@ export class BehaviorStatsProvider {
     }
     r = await a.makeReq(
       ['formatPath(path)', 'sl', 'sc', 'el', 'ec'],
-      [relative, BehaviorStatsProvider.shiftLines(arr)],
+      [relative, ...BehaviorStatsProvider.shiftLines(arr)],
       root, n);
     r0.set(path, r);
     return r;
@@ -145,16 +145,17 @@ export class BehaviorStatsProvider {
         throw new Error("don't handle multi workspace");
       }
       // TODO URGENT make a local Location and a database location (with a particular scheme to notify it, and the authority set to root)
+      // at the end is is not useful, better give root and relative path to concerned functions
       return (await Promise.all(symbols.map<[string, string[]]>(x =>
         ([x, x.split(/:/g)])
-      ).map(async ([path, pos]) => {
+      ).map(async ([path, pos],i) => {
         let r = r0.get(path);
         if (!r) {
           r = await c.makeReq(['formatPath(path)', 'sl', 'sc', 'el', 'ec'], BehaviorStatsProvider.shiftLines2(pos), root, 1);
           r0.set(path, r);
         }
         return r;
-      }))).reduce((acc, x) => (acc.push(...x), acc), []);
+      }))).reduce((acc, x) => [...acc, ...x], []);
     }
   }
 }

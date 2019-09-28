@@ -14,7 +14,7 @@ export class BehaviorCodeLens extends CodeLens {
     public async getCallStats(): Promise<string>;
     public async getCallStats(env?: 'production' | 'test') {
         console.log(147, this.root.name, this.location);
-        const o = await this.stats.searchingSymbols(this.root.name, [this.generalizedLoc+':'+[this.range.start.line,this.range.start.character,this.range.end.line,this.range.end.character].join(':')]);
+        const o = await this.stats.searchingSymbols(this.root.name, [this.generalizedLoc + ':' + [this.range.start.line, this.range.start.character, this.range.end.line, this.range.end.character].join(':')]);
         console.error('getCallStats', o);
         // TODO bench it compared to indexof |> slice
         // const tuple = o.reduce<[number, number]>(([prod, test], x) =>
@@ -32,20 +32,30 @@ export class BehaviorCodeLens extends CodeLens {
     }
 
     public async getFastWebViewResources(): Promise<resources_t> {
+        function f(x: string) { // TODO remove it once shift is solved
+            const [p, ...r] = x.split(/:/g);
+            return [p, parseInt(r[0]) - 1, r[1], parseInt(r[2]) - 1, r[3]].join(':');
+        }
         const o = await this.stats.searching(this.root.name, this.generalizedLoc, this.location.range);
         const symbols = new Set<string>();
-        o.forEach(x => x.ngram.forEach(x => symbols.add(x)));
+        o.forEach(x => x.ngram.forEach(x => symbols.add(f(x))));
         const symbols_stats = {} as symb_stats_t;
-        (await this.stats.searchingSymbols(this.root.name, [...symbols]))
-            .forEach(x => {
-                if (x.ngram.length !== 1) {
-                    throw new Error(x + ' is not a symbol');
+        const tmp = (await this.stats.searchingSymbols(this.root.name, [...symbols]));
+        console.log(3331, this.root.name, [...symbols], o, 'tmp', tmp);
+        tmp
+            .forEach((x, i) => {
+                console.log(555, 'x', x, 'i', i);
+                if (x.ngram.length === 1) {
+                    symbols_stats[x.ngram[0]] = {
+                        pocc: x.pocc,
+                        tocc: x.tocc
+                    };
                 }
-                symbols_stats[x.ngram[0]] = {
-                    pocc: x.pocc,
-                    tocc: x.tocc
-                };
             });
+        console.log(444, {
+            symb_stats: symbols_stats,
+            ngrams: o
+        });
         return {
             symb_stats: symbols_stats,
             ngrams: o
@@ -53,19 +63,24 @@ export class BehaviorCodeLens extends CodeLens {
     }
 
     public async getWebViewResources(): Promise<resources_t> {
+        function f(x: string) {
+            const [p, ...r] = x.split(/:/g);
+            return [p, parseInt(r[0]) - 1, r[1], parseInt(r[2]) - 1, r[3]].join(':');
+        }
         const o = await this.stats.searching(this.root.name, this.generalizedLoc, this.location.range, true, true);
         const symbols = new Set<string>();
-        o.forEach(x => x.ngram.forEach(x => symbols.add(x)));
+        o.forEach(x => x.ngram.forEach(x => symbols.add(f(x))));
         const symbols_stats = {} as symb_stats_t;
-        (await this.stats.searchingSymbols(this.root.name, [...symbols]))
+        const tmp = (await this.stats.searchingSymbols(this.root.name, [...symbols]));
+        console.log(3332, this.root.name, symbols, o, tmp);
+        tmp
             .forEach(x => {
-                if (x.ngram.length !== 1) {
-                    throw new Error(x + ' is not a symbol');
+                if (x.ngram.length === 1) {
+                    symbols_stats[x.ngram[0]] = {
+                        pocc: x.pocc,
+                        tocc: x.tocc
+                    };
                 }
-                symbols_stats[x.ngram[0]] = {
-                    pocc: x.pocc,
-                    tocc: x.tocc
-                };
             });
         return {
             symb_stats: symbols_stats,

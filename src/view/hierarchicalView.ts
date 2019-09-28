@@ -33,9 +33,14 @@ export class TreeView {
     }
 
     context.subscriptions.push(
-      vscode.commands.registerCommand('BehaviorProvider.showHierarchicalViewer', (resources: resources_t | undefined | null | Promise<resources_t>) => {
-        // TODO get root with https://github.com/Microsoft/vscode/wiki/Adopting-Multi-Root-Workspace-APIs#new-helpful-api
-        let root = 'gutenberg';
+      vscode.commands.registerCommand('BehaviorProvider.showHierarchicalViewer', async (resources: resources_t | undefined | null | Promise<resources_t>) => {
+        // TODO get workspace with https://github.com/Microsoft/vscode/wiki/Adopting-Multi-Root-Workspace-APIs#new-helpful-api
+        const workspaces = vscode.workspace.workspaceFolders;
+        if (!workspaces) {
+          throw new Error('no workspaces');
+        }
+        const root = workspaces.length === 1 ? workspaces[0] : (await vscode.window.showWorkspaceFolderPick()) || workspaces[0];
+
         if (currentPanel) { // already created
           currentPanel.reveal(vscode.ViewColumn.Two);
           if (resources !== undefined && resources !== null) {
@@ -68,7 +73,9 @@ export class TreeView {
             tree: {
               script: vscode.Uri.file(join(context.extensionPath, 'Viewers', 'global-behavior-visualization', 'script.js')),
               style: vscode.Uri.file(join(context.extensionPath, 'Viewers', 'global-behavior-visualization', 'style.css')),
-              data: vscode.Uri.file(join(context.extensionPath, 'Viewers', 'global-behavior-visualization', 'data.json'))
+              data: vscode.Uri.file(join(context.extensionPath, 'Viewers', 'global-behavior-visualization', 'data.json')),
+              d3: vscode.Uri.file(join(context.extensionPath, 'Viewers', 'global-behavior-visualization', 'd3/d3.js'))
+              
             }
           };
           currentPanel.webview.html = getWebviewContent(code_resources.tree);
@@ -78,7 +85,7 @@ export class TreeView {
             switch (message.command) {
               case 'ready': {
                 if (resources === undefined) { // default fallback
-                  const res = await this.stats.searchingSymbols(root);
+                  const res = await this.stats.searchingSymbols(root.name);
                   sendResources(res);
                 } else if (resources !== null) {
                   const res = await resources;
@@ -94,7 +101,13 @@ export class TreeView {
                 if (vscode.workspace.workspaceFolders.length !== 1) {
                   throw new Error("don't handle multi workspace");
                 }
-                const loc = parseLoc(message.position);//, vscode.workspace.workspaceFolders[0].uri);//vscode.workspace[0]
+                const [p, sl, sc, el, ec] = message.position.split(/:/g);
+                const loc = new vscode.Location(vscode.Uri.file(join(root.uri.path, p)),
+                  new vscode.Range(
+                    new vscode.Position(parseInt(sl), parseInt(sc)),
+                    new vscode.Position(parseInt(el), parseInt(ec))
+                  )
+                );
                 const doc = await vscode.workspace.openTextDocument(loc.uri);
                 const edi = await vscode.window.showTextDocument(doc, vscode.ViewColumn.One);
                 edi.revealRange(loc.range, vscode.TextEditorRevealType.InCenter);
@@ -108,12 +121,12 @@ export class TreeView {
                   }
                   if (vscode.workspace.workspaceFolders.length !== 1) {
                     throw new Error("don't handle multi workspace");
-                  } const [p,...r] = message.position.split(/:/g);
-                  const o = await stats.searching(root,p,[parseInt(r[0]),parseInt(r[1]),parseInt(r[2]),parseInt(r[3])]);//, vscode.workspace.workspaceFolders[0].uri, -1));
+                  } const [p, ...r] = message.position.split(/:/g);
+                  const o = await stats.searching(root.name, p, [parseInt(r[0]), parseInt(r[1]), parseInt(r[2]), parseInt(r[3])]);//, vscode.workspace.workspaceFolders[0].uri, -1));
                   const symbols = new Set<string>();
                   o.forEach(x => x.ngram.forEach(x => symbols.add(x)));
                   const symbols_stats = {} as any;
-                  (await stats.searchingSymbols(root,[...symbols]))
+                  (await stats.searchingSymbols(root.name, [...symbols]))
                     .forEach(x => {
                       if (x.ngram.length !== 1) {
                         throw new Error(x + ' is not a symbol');
@@ -157,13 +170,14 @@ function getWebviewContent(resources: {
   script: vscode.Uri;
   style: vscode.Uri;
   data: vscode.Uri;
+  d3: vscode.Uri;
 }) {
   return `
 <!DOCTYPE html>
 <meta charset="utf-8">
 <link rel="stylesheet" href="${'vscode-resource://' + resources.style.path}" type="text/css"/>
 <body>
-<script src="http://d3js.org/d3.v5.js" type="text/javascript" ></script>
+<script src="${'vscode-resource://' + resources.d3.path}" type="text/javascript" ></script>
 <script>window.mypath='${'vscode-resource://' + resources.data.path}'</script>
 <div id="settings"></div>
 <div id="chart"></div>
